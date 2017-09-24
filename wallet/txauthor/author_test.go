@@ -7,15 +7,15 @@ package txauthor_test
 import (
 	"testing"
 
-	"github.com/btcsuite/btcd/wire"
-	"github.com/btcsuite/btcutil"
-	. "github.com/btcsuite/btcwallet/wallet/txauthor"
-	"github.com/btcsuite/btcwallet/wallet/txrules"
+	"github.com/particl/partsuite_partd/wire"
+	partutil "github.com/particl/partsuite_partutil"
+	. "github.com/particl/partsuite_partwallet/txauthor"
+	"github.com/particl/partsuite_partwallet/wallet/txrules"
 
-	"github.com/btcsuite/btcwallet/wallet/internal/txsizes"
+	"github.com/particl/partsuite_partwallet/wallet/internal/txsizes"
 )
 
-func p2pkhOutputs(amounts ...btcutil.Amount) []*wire.TxOut {
+func p2pkhOutputs(amounts ...partutil.Amount) []*wire.TxOut {
 	v := make([]*wire.TxOut, 0, len(amounts))
 	for _, a := range amounts {
 		outScript := make([]byte, txsizes.P2PKHOutputSize)
@@ -26,14 +26,14 @@ func p2pkhOutputs(amounts ...btcutil.Amount) []*wire.TxOut {
 
 func makeInputSource(unspents []*wire.TxOut) InputSource {
 	// Return outputs in order.
-	currentTotal := btcutil.Amount(0)
+	currentTotal := partutil.Amount(0)
 	currentInputs := make([]*wire.TxIn, 0, len(unspents))
-	f := func(target btcutil.Amount) (btcutil.Amount, []*wire.TxIn, [][]byte, error) {
+	f := func(target partutil.Amount) (partutil.Amount, []*wire.TxIn, [][]byte, error) {
 		for currentTotal < target && len(unspents) != 0 {
 			u := unspents[0]
 			unspents = unspents[1:]
 			nextInput := wire.NewTxIn(&wire.OutPoint{}, nil)
-			currentTotal += btcutil.Amount(u.Value)
+			currentTotal += partutil.Amount(u.Value)
 			currentInputs = append(currentInputs, nextInput)
 		}
 		return currentTotal, currentInputs, make([][]byte, len(currentInputs)), nil
@@ -45,8 +45,8 @@ func TestNewUnsignedTransaction(t *testing.T) {
 	tests := []struct {
 		UnspentOutputs   []*wire.TxOut
 		Outputs          []*wire.TxOut
-		RelayFee         btcutil.Amount
-		ChangeAmount     btcutil.Amount
+		RelayFee         partutil.Amount
+		ChangeAmount     partutil.Amount
 		InputSourceError bool
 		InputCount       int
 	}{
@@ -199,7 +199,7 @@ func TestNewUnsignedTransaction(t *testing.T) {
 				continue
 			}
 		} else {
-			changeAmount := btcutil.Amount(tx.Tx.TxOut[tx.ChangeIndex].Value)
+			changeAmount := partutil.Amount(tx.Tx.TxOut[tx.ChangeIndex].Value)
 			if test.ChangeAmount == 0 {
 				t.Errorf("Test %d: Included change output with value %v but expected no change",
 					i, changeAmount)

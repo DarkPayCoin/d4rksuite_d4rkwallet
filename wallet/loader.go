@@ -10,10 +10,10 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcwallet/internal/prompt"
-	"github.com/btcsuite/btcwallet/waddrmgr"
-	"github.com/btcsuite/btcwallet/walletdb"
+	"github.com/particl/partsuite_partd/chaincfg"
+	"github.com/particl/partsuite_partwallet/internal/prompt"
+	"github.com/particl/partsuite_partwallet/waddrmgr"
+	"github.com/particl/partsuite_partwallet/walletdb"
 )
 
 const (
